@@ -1,0 +1,33 @@
+# Ignorer le répertoire target généré par Cargo
+/target
+
+# Ignorer le répertoire dist généré par Trunk (contient les fichiers WebAssembly, JS et HTML)
+dist/
+
+# Ignorer les fichiers Cargo.lock (si c'est une bibliothèque, sinon garde-le si c'est une application binaire)
+Cargo.lock
+
+# Fichiers spécifiques aux outils de build (Trunk)
+.trunk/
+
+# Ignorer les fichiers et répertoires spécifiques à Docker
+docker-compose.override.yml
+.dockerignore
+
+# Ignorer les fichiers de logs éventuels
+*.log
+
+# Fichiers spécifiques à l'éditeur (VSCode, IntelliJ, etc.)
+.vscode/
+.idea/
+
+# Fichiers temporaires de sauvegarde générés par les éditeurs
+*.swp
+*.bak
+*~
+
+# Fichiers spécifiques à macOS
+.DS_Store
+
+# Fichiers spécifiques à Linux
+*.lock
