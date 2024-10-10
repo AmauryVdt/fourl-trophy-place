@@ -3,9 +3,12 @@ use log::info;
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement};
 use gloo::events::EventListener;
+use stylist::yew::use_style;
+use yew::{classes, html};
 
-// Utilise Supabase comme backend
+// Utilise Supabase comme backen
 
+#[derive(Debug, Clone, Copy, PartialEq)]
 enum Color {
     Red,
     Green,
@@ -88,8 +91,60 @@ impl Board {
 }
 
 
-#[function_component(App2)]
-fn app2() -> Html {
+#[derive(Properties, PartialEq)]
+struct ColorSelectorProps {
+    color: Color,
+    on_click: Callback<Color>,
+}
+
+#[function_component(ColorSelectorComponent)]
+fn color_selector(props: &ColorSelectorProps) -> Html {
+    let on_click = props.on_click.clone();
+
+    let selected_color = use_state(|| Color::White);
+
+    let change_color = {
+        let selected_color = selected_color.clone();
+        move |color: Color| {
+            selected_color.set(color);
+        }
+    };
+
+    let colors = vec![
+        (Color::Red, "Red", "background-color: red;"),
+        (Color::Green, "Green", "background-color: green;"),
+        (Color::Blue, "Blue", "background-color: blue;"),
+        (Color::Yellow, "Yellow", "background-color: yellow;"),
+        (Color::Black, "Black", "background-color: black; color: white;"),
+        (Color::White, "White", "background-color: white;"),
+    ];
+
+    html! {
+        <div style="display: flex; flex-direction: raw; padding: 10px;">
+
+            <div style="margin-top: 20px;">
+                { format!("Selected color: {:?}", *selected_color) }
+            </div>
+
+            { for colors.into_iter().map(|(color, color_name, style)| {
+                let onclick = {
+                    let color = color.clone();
+                    let change_color = change_color.clone();
+                    Callback::from(move |_| change_color(color.clone()))
+                };
+                let button_style: String = format!("{} width: 50px; height: 50px;  margin: 5px; border: 1px solid black; border-radius: 50%;", style);
+                html! {
+                    <button {onclick} style={button_style}>
+                        // { color_name }
+                    </button>
+                }
+            })}
+        </div>
+    }
+}
+
+#[function_component(App)]
+fn app() -> Html {
     let canvas_ref = use_node_ref();
     let zoom_factor = use_state(|| 10.0);  // Facteur de zoom initial (10 pixels par "pixel")
 
@@ -171,7 +226,10 @@ fn app2() -> Html {
 
     html! {
         <div>
-            <canvas ref={canvas_ref} width="1000" height="1000" style="border: 1px solid black;" />
+            <canvas ref={canvas_ref} width="800" height="800" style="border: 1px solid black;" />
+            <div style="position: absolute; bottom: 10px; right: 10px; border: 1px solid black; border-radius: 40px;">
+                <ColorSelectorComponent color={Color::Red} on_click={|color| { info!("Color: {:?}", color); }} />
+            </div>
         </div>
     }
 }
@@ -180,5 +238,5 @@ fn app2() -> Html {
 fn main() {
 
     wasm_logger::init(wasm_logger::Config::default());
-    yew::Renderer::<App2>::new().render();
+    yew::Renderer::<App>::new().render();
 }

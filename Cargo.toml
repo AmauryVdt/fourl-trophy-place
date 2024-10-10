@@ -16,3 +16,4 @@ wasm-bindgen-futures = "0.4"
 log = "0.4.6"
 wasm-logger = "0.2.0"
 gloo = "0.11.0"
+stylist = { version = "0.13.0", features = ["yew_integration", "yew_use_style"] }
